@@ -15,7 +15,7 @@ fi
 
 if ./manifest-tool push from-spec manifest.yaml 2> /dev/null; then
   echo "All images pushed successfully, cleaning up tags."
-  if [ -n "${TAG_VER}" ]; then 
+  if [ -z "${TAG_VER}" ]; then 
     echo "Only cleanup SemVer tags"; 
     exit 0; 
   fi
