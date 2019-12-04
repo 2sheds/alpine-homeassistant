@@ -11,14 +11,18 @@ done
 
 # Enable CLI experimental manifest features
 export DOCKER_CLI_EXPERIMENTAL="enabled"
+DOCKER_CLI="docker run -e DOCKER_CLI_EXPERIMENTAL -v /var/run/docker.sock:/var/run/docker.sock -ti docker"
 
-if [ $(docker manifest inspect "${IMAGE_PREFIX}" | grep -i "architecture" | wc -l) -eq 3 ]; then
+if [ $(${DOCKER_CLI} manifest inspect "${IMAGE_PREFIX}" | grep -i "architecture" | wc -l) -eq 3 ]; then
   echo "All images pushed successfully, cleaning up tags."
   if [ "${TAG_PREFIX}" != "latest" ]; then
-    docker manifest create --amend "${IMAGE_PREFIX}" ${IMAGE_LIST}
-    docker manifest create --amend "${IMAGE_PREFIX%.*}" ${IMAGE_LIST}
+    ${DOCKER_CLI} manifest create --amend "${IMAGE_PREFIX%.*}" ${IMAGE_LIST}
+    ${DOCKER_CLI} manifest create --amend "${IMAGE_PREFIX}" ${IMAGE_LIST}
+    ${DOCKER_CLI} manifest push -p "${IMAGE_PREFIX%.*}"
+    ${DOCKER_CLI} manifest push -p "${IMAGE_PREFIX}"
   fi
-  docker manifest create --amend "${DOCKER_REPO}:latest" ${IMAGE_LIST} || exit 1
+  ${DOCKER_CLI} manifest create --amend "${DOCKER_REPO}:latest" ${IMAGE_LIST} || exit 1
+  ${DOCKER_CLI} manifest push -p "${DOCKER_REPO}:latest"
 
   ${PA_TOKEN:?PA_TOKEN not configured}
   ${PA_USER:?PA_USER not configured}
@@ -33,9 +37,9 @@ if [ $(docker manifest inspect "${IMAGE_PREFIX}" | grep -i "architecture" | wc -
 else
   echo "Manifest images not complete, continuing."
   if [[ ${BASEIMAGE_ARCH} == "arm"* ]]; then
-    docker manifest annotate ${IMAGE_PREFIX} ${IMAGE_NAME} --os linux --arch "${DOCKER_ARCH}" --variant "${BASEIMAGE_ARCH#arm*v}"
+    ${DOCKER_CLI} manifest annotate ${IMAGE_PREFIX} ${IMAGE_NAME} --os linux --arch "${DOCKER_ARCH}" --variant "${BASEIMAGE_ARCH#arm*v}"
   else
-    docker manifest annotate ${IMAGE_PREFIX} ${IMAGE_NAME} --os linux --arch "${DOCKER_ARCH}"
+    ${DOCKER_CLI} manifest annotate ${IMAGE_PREFIX} ${IMAGE_NAME} --os linux --arch "${DOCKER_ARCH}"
   fi
-  docker push ${IMAGE_NAME}
+  ${DOCKER_CLI} manifest push -p ${IMAGE_NAME}
 fi
