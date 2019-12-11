@@ -13,6 +13,8 @@ done
 export DOCKER_CLI_EXPERIMENTAL="enabled"
 DOCKER_CLI="docker run -e DOCKER_CLI_EXPERIMENTAL -v /var/run/docker.sock:/var/run/docker.sock -v ${HOME}/.docker:/root/.docker --rm docker"
 
+: ${PA_TOKEN:?PA_TOKEN not configured} ${PA_USER:?PA_USER not configured}
+
 if [ $(${DOCKER_CLI} manifest inspect "${IMAGE_PREFIX}" | grep -i "architecture" | wc -l) -eq 3 ]; then
   echo "All images pushed successfully, cleaning up tags."
   if [ "${TAG_PREFIX}" != "latest" ]; then
@@ -24,8 +26,6 @@ if [ $(${DOCKER_CLI} manifest inspect "${IMAGE_PREFIX}" | grep -i "architecture"
   ${DOCKER_CLI} manifest create --amend "${DOCKER_REPO}:latest" ${IMAGE_LIST} || exit 1
   ${DOCKER_CLI} manifest push -p "${DOCKER_REPO}:latest"
 
-  ${PA_TOKEN:?PA_TOKEN not configured}
-  ${PA_USER:?PA_USER not configured}
   # Obtain JWT for authorization 
   JW_TOKEN=$(curl -s -H "Content-Type: application/json" \
     -X POST -d "{\"username\": \"$PA_USER\", \"password\": \"$PA_TOKEN\"}" \
