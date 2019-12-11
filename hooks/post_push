@@ -36,6 +36,7 @@ if [ $(${DOCKER_CLI} manifest inspect "${IMAGE_PREFIX}" | grep -i "architecture"
   done
 else
   echo "Manifest images not complete, continuing."
+  ${DOCKER_CLI} manifest create --amend ${IMAGE_PREFIX} ${IMAGE_NAME}
   if [[ ${BASEIMAGE_ARCH} == "arm"* ]]; then
     ${DOCKER_CLI} manifest annotate ${IMAGE_PREFIX} ${IMAGE_NAME} --os linux --arch "${DOCKER_ARCH}" --variant "${BASEIMAGE_ARCH#arm*v}"
   else
