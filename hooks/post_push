@@ -41,5 +41,5 @@ else
   else
     ${DOCKER_CLI} manifest annotate ${IMAGE_PREFIX} ${IMAGE_NAME} --os linux --arch "${DOCKER_ARCH}"
   fi
-  ${DOCKER_CLI} manifest push -p ${IMAGE_NAME}
+  ${DOCKER_CLI} manifest push -p ${IMAGE_PREFIX}
 fi
