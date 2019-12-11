@@ -11,7 +11,7 @@ done
 
 # Enable CLI experimental manifest features
 export DOCKER_CLI_EXPERIMENTAL="enabled"
-DOCKER_CLI="docker run -e DOCKER_CLI_EXPERIMENTAL -v /var/run/docker.sock:/var/run/docker.sock docker"
+DOCKER_CLI="docker run -e DOCKER_CLI_EXPERIMENTAL -v /var/run/docker.sock:/var/run/docker.sock -v ${HOME}/.docker:/root/.docker --rm docker"
 
 if [ $(${DOCKER_CLI} manifest inspect "${IMAGE_PREFIX}" | grep -i "architecture" | wc -l) -eq 3 ]; then
   echo "All images pushed successfully, cleaning up tags."
