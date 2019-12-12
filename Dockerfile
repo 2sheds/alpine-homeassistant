@@ -1,8 +1,9 @@
-ARG QEMU_ARCH
-FROM multistage/qemu-user-static:x86_64-${QEMU_ARCH} AS qemu
+ARG QEMU_ARCH=x86_64
+FROM multistage/qemu-user-static:${QEMU_ARCH} AS qemu
 
 ARG ALPINE_VER="3.10"
 ARG BASEIMAGE_ARCH
+ARG QEMU_ARCH
 FROM ${BASEIMAGE_ARCH}/alpine:${ALPINE_VER} AS alpine_qemu
 ONBUILD COPY --from=qemu /usr/bin/qemu-${QEMU_ARCH}-static /usr/bin/
 
