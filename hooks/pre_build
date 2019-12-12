@@ -1,7 +1,6 @@
 #!/bin/bash
 
 . ./hooks/env
-[ "${BUILD_ARCH}" == "amd64" ] && \
-    { echo 'qemu-user-static: Registration not required for current arch'; exit 0; }
-
-docker run --rm --privileged multiarch/qemu-user-static:register --reset
+if [ "${BUILD_ENV}" == "qemu" ]; then
+  docker run --rm --privileged multiarch/qemu-user-static:register --reset
+fi

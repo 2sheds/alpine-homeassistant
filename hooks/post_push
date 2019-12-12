@@ -1,11 +1,12 @@
-#!/bin/bash
+#!/bin/bash -xe
 
 . ./hooks/env
 
 TAG_PREFIX=${DOCKER_TAG%-*}
 IMAGE_PREFIX="${IMAGE_NAME%-*}"
+ARCH_LIST="amd64 $(ls -1 Dockerfile.* | sed 's|Dockerfile.||')"
 IMAGE_LIST=""
-for i in "amd64" "arm64" "armhf"; do
+for i in ${ARCH_LIST}; do
   IMAGE_LIST="${IMAGE_LIST}${IMAGE_PREFIX}-${i} "
 done
 
@@ -17,8 +18,7 @@ DOCKER_CLI="docker run -e DOCKER_CLI_EXPERIMENTAL -v /var/run/docker.sock:/var/r
 ${DOCKER_CLI} login -u "${PA_USER}" -p "${PA_TOKEN}" >/dev/null 2>&1
 
 function manifest_annotate {
-  #${DOCKER_CLI} manifest annotate $1 ${IMAGE_PREFIX}-amd64 --os linux --arch "amd64"
-  ${DOCKER_CLI} manifest annotate $1 ${IMAGE_PREFIX}-armhf --os linux --arch "arm" --variant "7"
+  ${DOCKER_CLI} manifest annotate $1 ${IMAGE_PREFIX}-arm --os linux --arch "arm" --variant "7"
   ${DOCKER_CLI} manifest annotate $1 ${IMAGE_PREFIX}-arm64 --os linux --arch "arm64" --variant "8"
 }
 
@@ -40,6 +40,6 @@ JW_TOKEN=$(curl -s -H "Content-Type: application/json" \
   -X POST -d "{\"username\": \"$PA_USER\", \"password\": \"$PA_TOKEN\"}" \
   https://hub.docker.com/v2/users/login/ | python -c "import sys, json; print json.load(sys.stdin)['token']")
 # Clean up tags
-for i in "amd64" "arm64" "armhf"; do
+for i in ${ARCH_LIST}; do
   curl -s -H "Authorization: JWT ${JW_TOKEN}" -X DELETE "https://hub.docker.com/v2/repositories/${REPO}/tags/${TAG_PREFIX}-${i}/"
 done

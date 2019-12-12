@@ -4,10 +4,9 @@ DOCKER_REPO="${DOCKER_REPO:?DOCKER_REPO not defined}"
 SOURCE_COMMIT="${SOURCE_COMMIT:-$(git rev-parse HEAD)}"
 SOURCE_BRANCH="${SOURCE_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}"
 COMMIT_MSG="${COMMIT_MSG:-$(git show -s --format=%s)}"
-BUILD_ARCH=$(basename "${DOCKERFILE_PATH}" | cut -d '.' -f 2)
+DOCKERFILE_SUFFIX=$(basename "${DOCKERFILE_PATH}" | cut -d '.' -f 2 | grep -n '.')
+DOCKER_ARCH=${DOCKERFILE_SUFFIX:-amd64}
 PKG_VER=$(head -n 1 requirements.txt | awk -F '==' '{print $2}')
-DOCKER_TAG="${DOCKER_TAG:-${PKG_VER}-${BUILD_ARCH}}"
-IMAGE_NAME="${IMAGE_NAME:-${DOCKER_REPO}:${DOCKER_TAG}}"
 
 # Provide additional context
 VCS_URL="${VCS_URL:-$(git config --get remote.origin.url \
@@ -15,14 +14,12 @@ VCS_URL="${VCS_URL:-$(git config --get remote.origin.url \
 REPO="${DOCKER_REPO#*/}"
 ALPINE_VER="${ALPINE_VER:-3.10}"
 BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-case ${BUILD_ARCH} in
-    aarch64 ) BASEIMAGE_ARCH="arm64v8"; DOCKER_ARCH="arm64" ;;
-    armhf   ) BASEIMAGE_ARCH="arm32v7"; DOCKER_ARCH="arm" ;;
-    *       ) BASEIMAGE_ARCH="${BUILD_ARCH}"; DOCKER_ARCH="${BUILD_ARCH}" ;;
+BUILD_ENV="qemu"
+BASE_ARCH=$(uname -m)
+case ${DOCKER_ARCH} in
+    arm64 ) BASEIMAGE_ARCH="arm64v8"; PKG_ARCH="aarch64"; QEMU_ARCH="aarch64" ;;
+    armi  ) BASEIMAGE_ARCH="arm32v7"; PKG_ARCH="armhf"; QEMU_ARCH="arm" ;;
+    amd64 ) BUILD_ENV="native"; PKG_ARCH="amd64" ;;
 esac
-QEMU_ARCH=$([ "${BUILD_ARCH}" == "armhf" ] && echo "${BUILD_ARCH::-2}" || echo "${BUILD_ARCH}")
-QEMU_USER_STATIC_DOWNLOAD_URL="https://github.com/multiarch/qemu-user-static/releases/download"
-QEMU_USER_STATIC_LATEST_TAG=$(curl -s https://api.github.com/repos/multiarch/qemu-user-static/tags \
-    | grep 'name.*v[0-9]' \
-    | head -n 1 \
-    | cut -d '"' -f 4)
+DOCKER_TAG="${DOCKER_TAG:-${PKG_VER}-${DOCKER_ARCH}}"
+IMAGE_NAME="${IMAGE_NAME:-${DOCKER_REPO}:${DOCKER_TAG}}"

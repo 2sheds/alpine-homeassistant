@@ -1,12 +1,23 @@
+ARG QEMU_ARCH
+FROM multistage/qemu-user-static:x86_64-${QEMU_ARCH} AS qemu
+
 ARG ALPINE_VER="3.10"
 ARG BASEIMAGE_ARCH
+FROM ${BASEIMAGE_ARCH}/alpine:${ALPINE_VER} AS alpine_qemu
+ONBUILD COPY --from=qemu /usr/bin/qemu-${QEMU_ARCH}-static /usr/bin/
 
-FROM ${BASEIMAGE_ARCH}/alpine:${ALPINE_VER}
+ARG ALPINE_VER
+FROM alpine:${ALPINE_VER} AS alpine_native
+ONBUILD RUN echo "qemu-user-static: Registration not required for native arch"
+
+ARG BUILD_ENV=native
+
+FROM alpine_${BUILD_ENV}
 MAINTAINER Oleg Kurapov <oleg@kurapov.com>
 LABEL Description="Home Assistant"
 
 ARG ALPINE_VER
-ARG BASEPKG_ARCH
+ARG PKG_ARCH
 ARG QEMU_ARCH
 
 ARG BRANCH="none"
@@ -21,7 +32,7 @@ ARG MAKEFLAGS=-j4
 ARG VERSION="0.100.0"
 ARG PLUGINS="frontend|pyotp|PyQRCode|sqlalchemy|distro|http|nmap|weather|uptimerobot|rxv|wakeonlan|websocket|paho-mqtt|samsungctl[websocket]|pychromecast|aiohttp_cors|jsonrpc-websocket|jsonrpc-async"
 
-ENV WHEELS_LINKS="https://wheels.home-assistant.io/alpine-${ALPINE_VER}/${BASEPKG_ARCH}/"
+ENV WHEELS_LINKS="https://wheels.home-assistant.io/alpine-${ALPINE_VER}/${PKG_ARCH}/"
 
 LABEL \
   org.opencontainers.image.authors="Oleg Kurapov <oleg@kurapov.com>" \
@@ -31,7 +42,6 @@ LABEL \
   org.opencontainers.image.version="${VERSION}" \
   org.opencontainers.image.source="${VCS_URL}"
 
-__CROSS_COPY qemu-${QEMU_ARCH}-static /usr/bin/
 ADD "https://raw.githubusercontent.com/home-assistant/home-assistant/${VERSION}/requirements_all.txt" /tmp
 
 RUN apk add --no-cache git python3 ca-certificates libffi-dev libressl-dev nmap iputils && \
