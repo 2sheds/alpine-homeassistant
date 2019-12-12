@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash
 
 . ./hooks/env
 
@@ -9,25 +9,12 @@ for i in "amd64" "arm64" "armhf"; do
   IMAGE_LIST="${IMAGE_LIST}${IMAGE_PREFIX}-${i} "
 done
 
-: ${PA_TOKEN:?PA_TOKEN not configured} ${PA_USER:?PA_USER not configured}
-
-# Store registry credentials
-mkdir -p "${HOME}/.docker"
-cat <<EOT > "${HOME}/.docker/config.json"
-{
-    "auths": {
-        "https://${DOCKER_REPO%%/*}/v1/": {
-            "auth": "$(echo -n "${PA_USER}:${PA_TOKEN}" | base64)"
-        }
-    }
-}
-EOT
-
 # Enable experimental manifest features
 export DOCKER_CLI_EXPERIMENTAL="enabled"
 DOCKER_CLI="docker run -e DOCKER_CLI_EXPERIMENTAL -v /var/run/docker.sock:/var/run/docker.sock -v ${HOME}/.docker:/root/.docker --rm docker"
 
-${DOCKER_CLI}
+: ${PA_TOKEN:?PA_TOKEN not configured} ${PA_USER:?PA_USER not configured}
+${DOCKER_CLI} login -u "${PA_USER}" -p "${PA_TOKEN}" >/dev/null 2>&1
 
 function manifest_annotate {
   #${DOCKER_CLI} manifest annotate $1 ${IMAGE_PREFIX}-amd64 --os linux --arch "amd64"
