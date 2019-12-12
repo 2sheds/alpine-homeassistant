@@ -12,6 +12,7 @@ done
 : ${PA_TOKEN:?PA_TOKEN not configured} ${PA_USER:?PA_USER not configured}
 
 # Enable experimental manifest support, store credentials
+mkdir -p "${HOME}/.docker"
 cat <<EOT > "${HOME}/.docker/config.json"
 {
     "experimental": "enabled",
