@@ -9,9 +9,21 @@ for i in "amd64" "arm64" "armhf"; do
   IMAGE_LIST="${IMAGE_LIST}${IMAGE_PREFIX}-${i} "
 done
 
-# Enable CLI experimental manifest features
-export DOCKER_CLI_EXPERIMENTAL="enabled"
-DOCKER_CLI="docker run -e DOCKER_CLI_EXPERIMENTAL -v /var/run/docker.sock:/var/run/docker.sock -v ${HOME}/.docker:/root/.docker --rm docker"
+: ${PA_TOKEN:?PA_TOKEN not configured} ${PA_USER:?PA_USER not configured}
+
+# Enable experimental manifest support, store credentials
+cat <<EOT > "${HOME}/.docker/config.json"
+{
+    "experimental": "enabled",
+    "auths": {
+        "https://${DOCKER_REPO%%/*}/v1/": {
+            "auth": "$(echo -n "${PA_USER}:${PA_TOKEN}" | base64)"
+        }
+    }
+}
+EOT
+
+DOCKER_CLI="docker run -v /var/run/docker.sock:/var/run/docker.sock -v ${HOME}/.docker:/root/.docker --rm docker"
 
 function manifest_annotate {
   #${DOCKER_CLI} manifest annotate $1 ${IMAGE_PREFIX}-amd64 --os linux --arch "amd64"
@@ -19,29 +31,24 @@ function manifest_annotate {
   ${DOCKER_CLI} manifest annotate $1 ${IMAGE_PREFIX}-arm64 --os linux --arch "arm64" --variant "8"
 }
 
-: ${PA_TOKEN:?PA_TOKEN not configured} ${PA_USER:?PA_USER not configured}
-
-${DOCKER_CLI} login -u "${PA_USER}" -p "${PA_TOKEN}"
-
-if [ $(${DOCKER_CLI} manifest create --amend ${IMAGE_PREFIX} ${IMAGE_LIST}) ]; then
-  manifest_annotate "${TAG_PREFIX}"
-  ${DOCKER_CLI} manifest push -p "${IMAGE_PREFIX}"
-  if [ "${TAG_PREFIX}" != "latest" ]; then
-    ${DOCKER_CLI} manifest create --amend "${IMAGE_PREFIX%.*}" ${IMAGE_LIST}
-    manifest_annotate "${TAG_PREFIX%.*}"
-    ${DOCKER_CLI} manifest push -p "${IMAGE_PREFIX%.*}"
-    ${DOCKER_CLI} manifest create --amend "${DOCKER_REPO}:latest" ${IMAGE_LIST} || exit 1
-    manifest_annotate "latest"
-    ${DOCKER_CLI} manifest push -p "${DOCKER_REPO}:latest"
-  fi
-
-  echo "All images pushed successfully, cleaning up tags."
-  # Obtain JWT for authorization 
-  JW_TOKEN=$(curl -s -H "Content-Type: application/json" \
-    -X POST -d "{\"username\": \"$PA_USER\", \"password\": \"$PA_TOKEN\"}" \
-    https://hub.docker.com/v2/users/login/ | python -c "import sys, json; print json.load(sys.stdin)['token']")
-  # Clean up tags
-  for i in "amd64" "arm64" "armhf"; do
-    curl -s -H "Authorization: JWT ${JW_TOKEN}" -X DELETE "https://hub.docker.com/v2/repositories/${REPO}/tags/${TAG_PREFIX}-${i}/"
-  done
+${DOCKER_CLI} manifest create --amend ${IMAGE_PREFIX} ${IMAGE_LIST} || exit 0
+manifest_annotate "${IMAGE_PREFIX}"
+${DOCKER_CLI} manifest push -p "${IMAGE_PREFIX}"
+if [ "${TAG_PREFIX}" != "latest" ]; then
+  ${DOCKER_CLI} manifest create --amend "${IMAGE_PREFIX%.*}" ${IMAGE_LIST}
+  manifest_annotate "${IMAGE_PREFIX%.*}"
+  ${DOCKER_CLI} manifest push -p "${IMAGE_PREFIX%.*}"
+  ${DOCKER_CLI} manifest create --amend "${DOCKER_REPO}:latest" ${IMAGE_LIST}
+  manifest_annotate "${DOCKER_REPO}:latest"
+  ${DOCKER_CLI} manifest push -p "${DOCKER_REPO}:latest"
 fi
+
+echo "All images pushed successfully, cleaning up tags."
+# Obtain JWT for authorization
+JW_TOKEN=$(curl -s -H "Content-Type: application/json" \
+  -X POST -d "{\"username\": \"$PA_USER\", \"password\": \"$PA_TOKEN\"}" \
+  https://hub.docker.com/v2/users/login/ | python -c "import sys, json; print json.load(sys.stdin)['token']")
+# Clean up tags
+for i in "amd64" "arm64" "armhf"; do
+  curl -s -H "Authorization: JWT ${JW_TOKEN}" -X DELETE "https://hub.docker.com/v2/repositories/${REPO}/tags/${TAG_PREFIX}-${i}/"
+done
