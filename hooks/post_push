@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -xe
 
 . ./hooks/env
 
@@ -11,11 +11,10 @@ done
 
 : ${PA_TOKEN:?PA_TOKEN not configured} ${PA_USER:?PA_USER not configured}
 
-# Enable experimental manifest support, store credentials
+# Store registry credentials
 mkdir -p "${HOME}/.docker"
 cat <<EOT > "${HOME}/.docker/config.json"
 {
-    "experimental": "enabled",
     "auths": {
         "https://${DOCKER_REPO%%/*}/v1/": {
             "auth": "$(echo -n "${PA_USER}:${PA_TOKEN}" | base64)"
@@ -24,7 +23,11 @@ cat <<EOT > "${HOME}/.docker/config.json"
 }
 EOT
 
-DOCKER_CLI="docker run -v /var/run/docker.sock:/var/run/docker.sock -v ${HOME}/.docker:/root/.docker --rm docker"
+# Enable experimental manifest features
+export DOCKER_CLI_EXPERIMENTAL="enabled"
+DOCKER_CLI="docker run -e DOCKER_CLI_EXPERIMENTAL -v /var/run/docker.sock:/var/run/docker.sock -v ${HOME}/.docker:/root/.docker --rm docker"
+
+${DOCKER_CLI}
 
 function manifest_annotate {
   #${DOCKER_CLI} manifest annotate $1 ${IMAGE_PREFIX}-amd64 --os linux --arch "amd64"
