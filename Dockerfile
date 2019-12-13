@@ -31,7 +31,7 @@ LABEL \
   org.opencontainers.image.version="${VERSION}" \
   org.opencontainers.image.source="${VCS_URL}"
 
-__CROSS_COPY qemu-${QEMU_ARCH}-static /usr/bin/
+#__CROSS_COPY qemu-${QEMU_ARCH}-static /usr/bin/
 ADD "https://raw.githubusercontent.com/home-assistant/home-assistant/${VERSION}/requirements_all.txt" /tmp
 
 RUN apk add --no-cache git python3 ca-certificates libffi-dev libressl-dev nmap iputils && \
