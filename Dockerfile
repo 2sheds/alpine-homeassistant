@@ -1,20 +1,8 @@
-ARG QEMU_ARCH=x86_64
-FROM multistage/qemu-user-static:${QEMU_ARCH} AS qemu
-
 ARG ALPINE_VER="3.10"
-ARG BASEIMAGE_ARCH
-ARG QEMU_ARCH
-FROM ${BASEIMAGE_ARCH}/alpine:${ALPINE_VER} AS alpine_qemu
-ONBUILD COPY --from=qemu /usr/bin/qemu-${QEMU_ARCH}-static /usr/bin/
+ARG BASEIMAGE_ARCH="amd64"
 
-ARG ALPINE_VER
-FROM alpine:${ALPINE_VER} AS alpine_native
-ONBUILD RUN echo "qemu-user-static: Registration not required for native arch"
+FROM ${BASEIMAGE_ARCH}/alpine:${ALPINE_VER}
 
-ARG BUILD_ENV=native
-
-FROM alpine_${BUILD_ENV}
-MAINTAINER Oleg Kurapov <oleg@kurapov.com>
 LABEL Description="Home Assistant"
 
 ARG ALPINE_VER
@@ -43,6 +31,7 @@ LABEL \
   org.opencontainers.image.version="${VERSION}" \
   org.opencontainers.image.source="${VCS_URL}"
 
+__CROSS_COPY qemu-${QEMU_ARCH}-static /usr/bin/
 ADD "https://raw.githubusercontent.com/home-assistant/home-assistant/${VERSION}/requirements_all.txt" /tmp
 
 RUN apk add --no-cache git python3 ca-certificates libffi-dev libressl-dev nmap iputils && \

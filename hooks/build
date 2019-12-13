@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -xe
 
 . ./hooks/env
 
@@ -8,7 +8,6 @@ docker build \
   --build-arg BRANCH="${SOURCE_BRANCH}" \
   --build-arg VCS_URL="${VCS_URL}" \
   --build-arg BUILD_DATE="${BUILD_DATE}" \
-  --build-arg BUILD_ENV="${BUILD_ENV}" \
   --build-arg ALPINE_VER="${ALPINE_VER}" \
   --build-arg BASEIMAGE_ARCH="${BASEIMAGE_ARCH}" \
   --build-arg PKG_ARCH="${PKG_ARCH}" \
