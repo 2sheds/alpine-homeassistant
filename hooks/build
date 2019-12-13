@@ -12,5 +12,5 @@ docker build \
   --build-arg BASEIMAGE_ARCH="${BASEIMAGE_ARCH}" \
   --build-arg PKG_ARCH="${PKG_ARCH}" \
   --build-arg QEMU_ARCH="${QEMU_ARCH}" \
--f Dockerfile \
+-f "${DOCKERFILE_PATH}" \
 -t "${IMAGE_NAME}" .
