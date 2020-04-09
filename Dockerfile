@@ -47,7 +47,7 @@ RUN apk add --update-cache git python3 ca-certificates libffi-dev libressl-dev n
     pip3 install --no-cache-dir --no-index --only-binary=:all: --find-links ${WHEELS_LINKS} -r /tmp/requirements_core.txt && \
     pip3 install --no-cache-dir --no-index --only-binary=:all: --find-links ${WHEELS_LINKS} -r /tmp/requirements_plugins_filtered.txt && \
     pip3 install --no-cache-dir homeassistant=="${VERSION}" && \
-    curl -L -s https://github.com/jemalloc/jemalloc/releases/download/${JEMALLOC_VER}/jemalloc-${JEMALLOC_VER}.tar.bz2 | tar -xjf - -C /usr/src && \
+    wget -O - https://github.com/jemalloc/jemalloc/releases/download/${JEMALLOC_VER}/jemalloc-${JEMALLOC_VER}.tar.bz2 | tar -xjf - -C /usr/src && \
     cd /usr/src/jemalloc-${JEMALLOC_VER} && \
     ./configure && \
     make && \
