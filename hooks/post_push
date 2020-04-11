@@ -10,10 +10,6 @@ for i in ${ARCH_LIST}; do
   IMAGE_LIST="${IMAGE_LIST}${IMAGE_PREFIX}-${i} "
 done
 
-# Enable experimental manifest features
-export DOCKER_CLI_EXPERIMENTAL="enabled"
-DOCKER_CLI="docker run -e DOCKER_CLI_EXPERIMENTAL -v /var/run/docker.sock:/var/run/docker.sock -v ${HOME}/.docker:/root/.docker --rm docker"
-
 : ${PA_TOKEN:?PA_TOKEN not configured} ${PA_USER:?PA_USER not configured}
 ${DOCKER_CLI} login -u "${PA_USER}" -p "${PA_TOKEN}" >/dev/null 2>&1
 

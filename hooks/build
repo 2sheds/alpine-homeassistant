@@ -2,7 +2,7 @@
 
 . ./hooks/env
 
-docker build \
+DOCKER_BUILDKIT=1 ${DOCKER_CLI} build --progress=plain \
   --build-arg VERSION="${PKG_VER}"  \
   --build-arg COMMIT="${SOURCE_COMMIT}" \
   --build-arg BRANCH="${SOURCE_BRANCH}" \

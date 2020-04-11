@@ -22,3 +22,7 @@ case "${DOCKER_ARCH}" in
     arm   ) BASEIMAGE_ARCH="arm32v7"; PKG_ARCH="armhf"; QEMU_ARCH="arm" ;;
     amd64 ) BASEIMAGE_ARCH="amd64"; PKG_ARCH="amd64"; BUILD_ENV="native" ;;
 esac
+
+# Enable experimental manifest features
+export DOCKER_CLI_EXPERIMENTAL="enabled"
+DOCKER_CLI="docker run -e DOCKER_CLI_EXPERIMENTAL -v /var/run/docker.sock:/var/run/docker.sock -v ${HOME}/.docker:/root/.docker --rm docker"
