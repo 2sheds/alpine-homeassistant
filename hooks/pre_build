@@ -6,4 +6,4 @@ if [ "${BUILD_ENV}" == "native" ]; then
   exit 0
 fi
 
-${DOCKER_CLI} run --rm --privileged multiarch/qemu-user-static:register --reset
+docker run --rm --privileged multiarch/qemu-user-static:register --reset

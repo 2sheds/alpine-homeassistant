@@ -2,7 +2,7 @@
 
 . ./hooks/env
 
-DOCKER_BUILDKIT=1 ${DOCKER_CLI} build --progress=plain \
+docker build --progress=plain \
   --build-arg VERSION="${PKG_VER}"  \
   --build-arg COMMIT="${SOURCE_COMMIT}" \
   --build-arg BRANCH="${SOURCE_BRANCH}" \
@@ -14,4 +14,5 @@ DOCKER_BUILDKIT=1 ${DOCKER_CLI} build --progress=plain \
   --build-arg PKG_ARCH="${PKG_ARCH}" \
   --build-arg QEMU_ARCH="${QEMU_ARCH}" \
 -f "${DOCKERFILE_PATH}" \
--t "${IMAGE_NAME}" .
+-t "${IMAGE_NAME}" . \
+| while read line ; do echo "$(date)| $line"; done;
