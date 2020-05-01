@@ -52,7 +52,7 @@ RUN apk add --update-cache git nmap iputils && \
     make && \
     make install && \
     apk del build-dependencies && \
-    rm -rf /tmp/* /var/tmp/* /var/cache/apk/* /usr/src/jemalloc-${JEMALLOC_VER}
+    rm -rf /tmp/* /var/tmp/* /var/cache/apk/* /usr/src/*
 
 ENV LD_PRELOAD=/usr/local/lib/libjemalloc.so.2
 
