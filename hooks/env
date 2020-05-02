@@ -22,6 +22,8 @@ case "${DOCKER_ARCH}" in
     arm   ) BASEIMAGE_ARCH="arm32v7"; PKG_ARCH="armhf"; QEMU_ARCH="arm" ;;
     amd64 ) BASEIMAGE_ARCH="amd64"; PKG_ARCH="amd64"; BUILD_ENV="native" ;;
 esac
+TAG_PREFIX=${DOCKER_TAG%-*}
+IMAGE_PREFIX="${IMAGE_NAME%-*}"
 
 # Enable experimental manifest features
 export DOCKER_CLI_EXPERIMENTAL="enabled"
