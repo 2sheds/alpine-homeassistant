@@ -38,6 +38,8 @@ LABEL \
 
 #__CROSS_COPY qemu-${QEMU_ARCH}-static /usr/bin/
 ADD "https://raw.githubusercontent.com/home-assistant/home-assistant/${VERSION}/requirements_all.txt" /tmp
+ADD "https://raw.githubusercontent.com/home-assistant/home-assistant/${VERSION}/requirements.txt" /tmp
+ADD "https://raw.githubusercontent.com/home-assistant/home-assistant/${VERSION}/homeassistant/package_constraints.txt" /tmp/homeassistant/package_constraints.txt
 
 RUN apk add --no-cache git nmap iputils && \
     addgroup -g ${GUID} hass && \
