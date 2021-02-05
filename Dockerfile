@@ -24,7 +24,7 @@ ARG UID=1000
 ARG GUID=1000
 ARG MAKEFLAGS=-j4
 ARG VERSION="0.100.0"
-ARG PLUGINS="frontend|pyotp|PyQRCode|sqlalchemy|distro|nmap|pyuptimerobot|rxv|wakeonlan|websocket-client|paho-mqtt|samsungctl|pychromecast|aiohttp_cors"
+ARG PLUGINS="frontend|pyotp|PyQRCode|sqlalchemy|distro|nmap|pyuptimerobot|rxv|wakeonlan|websocket-client|paho-mqtt|samsungctl|pychromecast|aiohttp_cors|scapy"
 
 ENV WHEELS_LINKS="https://wheels.home-assistant.io/alpine-${ALPINE_VER}/${PKG_ARCH}/"
 
