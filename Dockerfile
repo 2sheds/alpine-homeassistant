@@ -24,7 +24,7 @@ ARG UID=1000
 ARG GUID=1000
 ARG MAKEFLAGS=-j4
 ARG VERSION="0.100.0"
-ARG PLUGINS="frontend|pyotp|PyQRCode|sqlalchemy|distro|nmap|pyuptimerobot|rxv|wakeonlan|websocket-client|paho-mqtt|samsungctl|pychromecast|aiohttp_cors|scapy"
+ARG PLUGINS="home-assistant-frontend|PyNaCl|defusedxml|distro|zeroconf|hass-nabucasa|aiohttp_cors|scapy"
 
 ENV WHEELS_LINKS="https://wheels.home-assistant.io/alpine-${ALPINE_VER}/${PKG_ARCH}/"
 
@@ -37,19 +37,13 @@ LABEL \
   org.opencontainers.image.source="${VCS_URL}"
 
 #__CROSS_COPY qemu-${QEMU_ARCH}-static /usr/bin/
-ADD "https://raw.githubusercontent.com/home-assistant/home-assistant/${VERSION}/requirements_all.txt" /tmp
-ADD "https://raw.githubusercontent.com/home-assistant/home-assistant/${VERSION}/requirements.txt" /tmp
-ADD "https://raw.githubusercontent.com/home-assistant/home-assistant/${VERSION}/homeassistant/package_constraints.txt" /tmp/homeassistant/package_constraints.txt
 
 RUN apk add --no-cache git nmap iputils && \
     addgroup -g ${GUID} hass && \
     adduser -h /data -D -G hass -s /bin/sh -u ${UID} hass && \
-    pip3 install --upgrade --no-cache-dir pip && \
-    sed '/^$/q' /tmp/requirements_all.txt > /tmp/requirements_core.txt && \
-    sed '1,/^$/d' /tmp/requirements_all.txt > /requirements_plugins.txt && \
-    egrep -w -e "${PLUGINS}" /requirements_plugins.txt | grep -v '#' > /tmp/requirements_plugins_filtered.txt && \
-    pip3 install --no-cache-dir --no-index --only-binary=:all: --find-links ${WHEELS_LINKS} -r /tmp/requirements_core.txt -r /tmp/requirements_plugins_filtered.txt && \
-    pip3 install --no-cache-dir homeassistant=="${VERSION}" && \
+    wget -q "https://raw.githubusercontent.com/home-assistant/home-assistant/${VERSION}/requirements_all.txt" -P /usr/src/ && \
+    grep -w -E "${PLUGINS}" /usr/src/requirements_all.txt | grep -v '#' > /tmp/requirements_plugins.txt && \
+    pip3 install --no-cache-dir --prefer-binary --find-links ${WHEELS_LINKS} -r /tmp/requirements_plugins.txt homeassistant=="${VERSION}" && \
     rm -rf /tmp/* /var/tmp/*
 
 COPY --from=jemalloc /usr/local/lib/libjemalloc.so* /usr/local/lib/
@@ -58,5 +52,5 @@ ENV LD_PRELOAD=/usr/local/lib/libjemalloc.so.2
 
 EXPOSE 8123
 
-ENTRYPOINT ["hass", "--open-ui", "--config=/data"]
+ENTRYPOINT ["hass", "--config=/data"]
 
