@@ -24,7 +24,7 @@ ARG UID=1000
 ARG GUID=1000
 ARG MAKEFLAGS=-j4
 ARG VERSION="0.100.0"
-ARG PLUGINS="home-assistant-frontend|PyNaCl|defusedxml|distro|zeroconf|hass-nabucasa|aiohttp_cors|scapy"
+ARG PLUGINS="home-assistant-frontend|PyNaCl|defusedxml|distro|zeroconf|hass-nabucasa|aiohttp_cors|scapy|aiodiscover"
 
 ENV WHEELS_LINKS="https://wheels.home-assistant.io/alpine-${ALPINE_VER}/${PKG_ARCH}/"
 
