@@ -38,7 +38,7 @@ LABEL \
 
 #__CROSS_COPY qemu-${QEMU_ARCH}-static /usr/bin/
 
-RUN apk add --no-cache git nmap iputils && \
+RUN apk add --no-cache git nmap iputils tzdata && \
     addgroup -g ${GUID} hass && \
     adduser -h /data -D -G hass -s /bin/sh -u ${UID} hass && \
     wget -q "https://raw.githubusercontent.com/home-assistant/home-assistant/${VERSION}/requirements_all.txt" -P /usr/src/ && \
