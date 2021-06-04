@@ -38,13 +38,15 @@ LABEL \
 
 #__CROSS_COPY qemu-${QEMU_ARCH}-static /usr/bin/
 
-RUN apk add --no-cache git nmap iputils tzdata && \
+RUN apk add --update-cache git nmap iputils tzdata && \
+    apk add --virtual=build-dependencies build-base libffi-dev ${DEPS} && \
     addgroup -g ${GUID} hass && \
     adduser -h /data -D -G hass -s /bin/sh -u ${UID} hass && \
     wget -q "https://raw.githubusercontent.com/home-assistant/home-assistant/${VERSION}/requirements_all.txt" -P /usr/src/ && \
     grep -w -E "${PLUGINS}" /usr/src/requirements_all.txt | grep -v '#' > /tmp/requirements_plugins.txt && \
     pip3 install --no-cache-dir --prefer-binary --find-links ${WHEELS_LINKS} -r /tmp/requirements_plugins.txt homeassistant=="${VERSION}" && \
-    rm -rf /tmp/* /var/tmp/*
+    apk del build-dependencies && \
+    rm -rf /tmp/* /var/tmp/* /var/cache/apk/*
 
 COPY --from=jemalloc /usr/local/lib/libjemalloc.so* /usr/local/lib/
 
