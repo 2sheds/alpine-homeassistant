@@ -31,7 +31,7 @@ RUN apk add --update-cache git nmap iputils tzdata && \
     adduser -h /data -D -G hass -s /bin/sh -u ${UID} hass && \
     wget -q "https://raw.githubusercontent.com/home-assistant/home-assistant/${VERSION}/requirements_all.txt" -P /usr/src/ && \
     grep -w -E "${PLUGINS}" /usr/src/requirements_all.txt | grep -v '#' > /tmp/requirements_plugins.txt && \
-    pip3 install --no-cache-dir --prefer-binary -r /tmp/requirements_plugins.txt homeassistant=="${VERSION}" && \
+    pip3 install --no-cache-dir -r /tmp/requirements_plugins.txt homeassistant=="${VERSION}" && \
     apk del build-dependencies && \
     rm -rf /tmp/* /var/tmp/* /var/cache/apk/*
 
