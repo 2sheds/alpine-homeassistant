@@ -1,7 +1,7 @@
 name: autotag
 
 on:
-  push:
+  pull_request:
     paths:
       - requirements.txt
     branches:
@@ -10,11 +10,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
     - uses: actions/checkout@master
     - uses: jaliborc/action-general-autotag@1.0.1
-      with:
+      env:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      with:
         source_file: "requirements.txt"
         extraction_regex: "homeassistant==(\\d+.\\d+.\\d+)"
         tag_message: ""
