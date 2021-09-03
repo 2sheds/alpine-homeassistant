@@ -2,6 +2,7 @@ name: Docker Image CI
 
 on:
   push:
+    tags: ["*.*.*"]
     branches:
       - master
 
@@ -17,6 +18,7 @@ jobs:
       with:
         images: kurapov/alpine-homeassistant
         tags: |
+          type=ref,event=tag
           type=semver,pattern={{version}}
           type=semver,pattern={{major}}.{{minor}}
     - name: Login to Docker Hub
