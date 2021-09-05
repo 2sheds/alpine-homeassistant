@@ -3,7 +3,7 @@
 ## Description
 
 [![Home Assistant version](https://img.shields.io/github/v/tag/2sheds/alpine-homeassistant?label=homeassistant&logo=python&logoColor=white)](https://github.com/home-assistant/home-assistant/releases)
-[![Docker cloud build](https://img.shields.io/docker/cloud/build/kurapov/alpine-homeassistant?logo=docker&logoColor=white)](https://hub.docker.com/r/kurapov/alpine-homeassistant/builds)
+[![Docker Image CI](https://github.com/2sheds/alpine-homeassistant/actions/workflows/docker-image.yml/badge.svg?branch=master)](https://github.com/2sheds/alpine-homeassistant/actions/workflows/docker-image.yml)
 [![Docker image pulls](https://img.shields.io/docker/pulls/kurapov/alpine-homeassistant?logo=docker&logoColor=white)](https://hub.docker.com/r/kurapov/alpine-homeassistant)
 
 Small docker image with [home assistant](https://home-assistant.io/) based on [Alpine Linux](https://hub.docker.com/_/alpine/).
@@ -48,7 +48,7 @@ Please check the [Dockerfile](Dockerfile) for the list on dependencies embedded.
 You can easily use this image as a base and build your own with additionnal plugins. For example with this `Dockerfile` you use my image as a base and add Homekit plugin, change user & group ID of `hass` user and modify an ENTRYPOINT :
 
 ```
-FROM seblucas/alpine-homeassistant:latest
+FROM kurapov/alpine-homeassistant:latest
 
 ARG UID="1001"
 ARG GUID="1001"
