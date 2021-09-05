@@ -1,11 +1,8 @@
 name: Docker Image CI
 
 on:
-  push:
-    tags: ["*.*.*"]
-    branches:
-      - master
   create:
+  push:
     tags: ["*.*.*"]
     branches:
       - master
