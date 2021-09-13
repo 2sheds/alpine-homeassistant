@@ -1,1 +1,1 @@
-homeassistant==2021.9.4
+homeassistant==2021.9.6
