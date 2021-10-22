@@ -1,6 +1,7 @@
 name: Docker Image CI
 
 on:
+  create:
   workflow_run:
     workflows: "autotag"
     types: ['completed']
@@ -10,6 +11,7 @@ on:
 
 jobs:
   build:
+    if: ${{ startsWith(github.ref, 'refs/tags/') }}
     runs-on: ubuntu-latest
     steps:
     - name: Check Out Repo
