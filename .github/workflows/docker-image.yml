@@ -2,9 +2,6 @@ name: Docker Image CI
 
 on:
   create:
-  workflow_run:
-    workflows: ['autotag']
-    types: ['completed']
   push:
     tags: ["*.*.*"]
     branches: ['master']
