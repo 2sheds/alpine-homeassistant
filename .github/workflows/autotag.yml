@@ -10,12 +10,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions: write-all
     steps:
     - uses: actions/checkout@master
     - uses: onemedical/action-general-autotag@1.1.1
       with:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        GITHUB_TOKEN: "${{ secrets.AUTOTAG }}"
         source_file: "requirements.txt"
         extraction_regex: "homeassistant==(\\d+.\\d+.\\d+)"
         tag_message: ""
