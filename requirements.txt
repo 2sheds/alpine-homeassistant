@@ -1,1 +1,1 @@
-homeassistant==2022.5.1
+homeassistant==2022.5.3
