@@ -23,7 +23,7 @@ ARG GUID=1000
 ARG MAKEFLAGS=-j4
 ARG VERSION="0.100.0"
 ARG DEPS="openssl-dev"
-ARG PLUGINS="home-assistant-frontend|PyNaCl|defusedxml|distro|zeroconf|hass-nabucasa|aiohttp_cors|scapy|aiodiscover"
+ARG PLUGINS="home-assistant-frontend|PyNaCl|defusedxml|distro|zeroconf|hass-nabucasa|aiohttp_cors|scapy|aiodiscover|psutil-home-assistant|securetar"
 
 RUN apk add --update-cache git nmap iputils tzdata && \
     apk add --virtual=build-dependencies build-base libffi-dev ${DEPS} && \
