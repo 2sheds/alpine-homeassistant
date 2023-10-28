@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - uses: onemedical/action-general-autotag@b6b9477c3343c3c3b517372e7d29a4d62c0d38a2
+    - uses: onemedical/action-general-autotag@4af908afc3a0c23633442cec6ab52878a634b7d6
       with:
         GITHUB_TOKEN: "${{ secrets.AUTOTAG }}"
         source_file: "requirements.txt"
