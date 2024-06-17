@@ -4,7 +4,8 @@ updates:
   directory: "/"
   schedule:
     interval: daily
-    time: "07:00"
+    time: "06:00"
+    timezone: "Europe/Paris"
   open-pull-requests-limit: 10
   allow:
   - dependency-name: homeassistant
