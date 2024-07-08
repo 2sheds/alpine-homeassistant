@@ -1,11 +1,9 @@
-ARG ALPINE_VER="3.19"
+ARG ALPINE_VER="3.20"
 ARG PYTHON_VER="3.12"
-ARG BASEIMAGE_ARCH="amd64"
-ARG DOCKER_ARCH="amd64"
 
-FROM kurapov/alpine-jemalloc:latest-${DOCKER_ARCH} AS jemalloc
+FROM kurapov/alpine-jemalloc:5.3.0 AS jemalloc
 
-FROM ${BASEIMAGE_ARCH}/python:${PYTHON_VER}-alpine${ALPINE_VER}
+FROM python:${PYTHON_VER}-alpine${ALPINE_VER}
 
 LABEL Description="Home Assistant"
 
