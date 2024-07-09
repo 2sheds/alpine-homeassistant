@@ -20,7 +20,7 @@ ARG UID=1000
 ARG GUID=1000
 ARG MAKEFLAGS=-j4
 ARG VERSION="0.100.0"
-ARG DEPS="openssl-dev"
+ARG DEPS="openssl-dev cargo"
 ARG PLUGINS="home-assistant-frontend|PyNaCl|defusedxml|distro|zeroconf|hass-nabucasa|aiohttp_cors|scapy|aiodiscover|psutil-home-assistant|securetar"
 
 RUN apk add --update-cache git nmap iputils tzdata && \
