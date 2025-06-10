@@ -7,8 +7,6 @@ updates:
     time: "06:00"
     timezone: "Europe/Paris"
   open-pull-requests-limit: 10
-  allow:
-  - dependency-name: homeassistant
 - package-ecosystem: github-actions
   directory: "/"
   schedule:
