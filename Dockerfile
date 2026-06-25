@@ -1,5 +1,5 @@
-ARG ALPINE_VER="3.20"
-ARG PYTHON_VER="3.13"
+ARG ALPINE_VER="3.24"
+ARG PYTHON_VER="3.14"
 
 FROM kurapov/alpine-jemalloc:5.3.0 AS jemalloc
 
