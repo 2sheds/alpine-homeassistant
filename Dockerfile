@@ -1,13 +1,9 @@
-ARG ALPINE_VER="3.24"
-ARG PYTHON_VER="3.14"
-
 FROM kurapov/alpine-jemalloc:5.3.0 AS jemalloc
 
-FROM python:${PYTHON_VER}-alpine${ALPINE_VER}
+FROM python:3.14.7-alpine
 
 LABEL Description="Home Assistant"
 
-ARG ALPINE_VER
 ARG BASEIMAGE_ARCH
 
 ARG BRANCH="none"
