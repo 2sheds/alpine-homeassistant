@@ -1,6 +1,6 @@
 FROM kurapov/alpine-jemalloc:5.3.0 AS jemalloc
 
-FROM python:3.14.7-alpine
+FROM python:3.15.0rc1-alpine
 
 LABEL Description="Home Assistant"
 
